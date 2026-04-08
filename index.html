@@ -1576,7 +1576,7 @@ body{padding-top:env(safe-area-inset-top)}
       <button class="btn btn-green" id="playAgainBtn" onclick="playAgain()">▶ Play Again</button>
       <button class="btn btn-purple" onclick="openShare()">📤 Share</button>
       <button class="btn btn-orange" onclick="createChallenge()" id="v1ChalBtn">⚔️ Challenge</button>
-      <button class="btn btn-ghost" onclick="closeOv()">✕</button>
+      <button class="btn btn-ghost" onclick="quitGame()">✕ Quit</button>
     </div>
   </div>
 </div>
@@ -2701,6 +2701,9 @@ function loadTourneyData(){
     todayEntries=d.entries||[]
     myBestToday=d.myBest||null
   }catch(e){todayEntries=[];myBestToday=null}
+  // Migrate old entries that have no diff field
+  let rng2=mulberry32(getDailySeed()+999)
+  todayEntries.forEach(e=>{if(!e.diff)e.diff=rng2()<0.5?'easy':'hard'})
   // seed simulated entries using daily date so they're consistent per day
   if(todayEntries.filter(e=>!e.mine).length===0){
     let s=getDailySeed()
@@ -3277,13 +3280,7 @@ function showOv(o){
   if(o.showPrize){pp.style.display='block';const p=o.prizes||[],dist=todayEntries.length*getEntryFee()*.9;document.getElementById('opr1').innerHTML=`<span>🥇 1st (50%)</span><span>${(p[0]||(dist*.5)).toFixed(3)} AVAX</span>`;document.getElementById('opr2').innerHTML=`<span>🥈 2nd (30%)</span><span>${(p[1]||(dist*.3)).toFixed(3)} AVAX</span>`;document.getElementById('opr3').innerHTML=`<span>🥉 3rd (20%)</span><span>${(p[2]||(dist*.2)).toFixed(3)} AVAX</span>`;const yours=o.rank<=3?(o.prizes||[])[o.rank-1]||0:0;document.getElementById('oprYou').innerHTML=`<span>Your Payout</span><span style="color:${yours>0?'var(--kaspa)':'var(--dim)'}">${yours>0?yours.toFixed(3)+' AVAX':'—'}</span>`}
   else{pp.style.display='none'}
   {const _ov=document.getElementById('ov');if(_ov)_ov.classList.add('show')}
-  // Auto-reset: start 5s countdown, then auto play-again
-  clearTimeout(_autoResetTimer)
-  _clearResetCountdown()
-  _autoResetTimer=setTimeout(()=>{
-    _startAutoReset(5)
-    _autoResetTimer=setTimeout(()=>playAgain(),5000)
-  },1500) // wait 1.5s before countdown starts
+  // No auto-reset — player chooses when to continue
 }
 function playAgain(){
   clearTimeout(_autoResetTimer)
@@ -3312,6 +3309,15 @@ function _startAutoReset(delaySec){
   },1000)
 }
 function closeOv(){const _e=document.getElementById('ov');if(_e)_e.classList.remove('show')}
+function quitGame(){
+  closeOv()
+  gameOn=false
+  clearInterval(tid)
+  training=true;isDailyMode=false
+  setTEl('2:00','')
+  const gw=document.getElementById('gridWrap');if(gw)gw.classList.remove('active')
+  hideGameBar()
+}
 
 /* ══════════════════════════════════════════════════
    PARTICLES
