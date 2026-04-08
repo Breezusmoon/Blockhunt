@@ -2769,9 +2769,9 @@ function updateTopBar(){
   const easyPool=(todayEntries.filter(e=>e.diff==='easy').length||0)*ENTRY_FEES.easy*0.9
   const hardPool=(todayEntries.filter(e=>e.diff==='hard').length||0)*ENTRY_FEES.hard*0.9
   const weeklyPool=(todayEntries.filter(e=>e.diff==='weekly').length||0)*ENTRY_FEES.weekly*0.9
-  const ep=document.getElementById('easyPrize');if(ep)ep.textContent=easyPool>0?easyPool.toFixed(3)+' AVAX':'No entries yet'
-  const hp=document.getElementById('hardPrize');if(hp)hp.textContent=hardPool>0?hardPool.toFixed(3)+' AVAX':'No entries yet'
-  const wp=document.getElementById('weeklyPrize');if(wp)wp.textContent=weeklyPool>0?weeklyPool.toFixed(3)+' AVAX':'No entries yet'
+  const ep2=document.getElementById('easyPrize');if(ep2)ep2.textContent=easyPool>0?easyPool.toFixed(3)+' AVAX':'No entries yet'
+  const hp2=document.getElementById('hardPrize');if(hp2)hp2.textContent=hardPool>0?hardPool.toFixed(3)+' AVAX':'No entries yet'
+  const wp2=document.getElementById('weeklyPrize');if(wp2)wp2.textContent=weeklyPool>0?weeklyPool.toFixed(3)+' AVAX':'No entries yet'
 }
 
 function startTourneyTimer(){
