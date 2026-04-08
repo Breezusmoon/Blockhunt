@@ -537,6 +537,29 @@ display:none !important;
   border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;
   box-shadow:0 4px 24px rgba(0,0,0,.6),inset 0 1px 0 rgba(157,78,221,.06);
 }
+/* Sticky word panel — stays visible while scrolling grid */
+#wordPanel.sticky{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  max-width:100%;width:100%;
+  border-radius:0;border-left:none;border-right:none;border-top:none;
+  padding:8px 20px;
+  background:rgba(10,4,20,.97);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,107,0,.4);
+  box-shadow:0 4px 32px rgba(0,0,0,.9);
+  display:flex;align-items:center;gap:16px;
+}
+#wordPanel.sticky .word-panel-title{
+  margin-bottom:0;white-space:nowrap;flex-shrink:0;font-size:9px;
+}
+#wordPanel.sticky #wlist{
+  padding:0;gap:6px;flex-wrap:nowrap;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+#wordPanel.sticky #wlist::-webkit-scrollbar{display:none}
+#wordPanel.sticky .chip{
+  font-size:11px;padding:6px 12px;flex-shrink:0;
+}
 .word-panel-title{font-family:var(--fo);font-size:11px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
 #wlist{display:flex;flex-wrap:wrap;gap:10px;padding:4px 2px}
 .chip{
@@ -1478,6 +1501,7 @@ body{padding-top:env(safe-area-inset-top)}
       <div class="word-panel-title">🔍 Find these words</div>
       <div id="wlist"></div>
     </div>
+    <div id="wordPanelSpacer" style="display:none"></div>
 
     <!-- TIMER ABOVE GRID -->
     <div id="gridTimerWrap">
@@ -2933,6 +2957,32 @@ function setTEl(t,c){
 /* ══════════════════════════════════════════════════
    GRID — with fly-in animation
 ══════════════════════════════════════════════════ */
+/* ── Sticky word panel on scroll ── */
+let _wpSticky=false
+function initStickyWordPanel(){
+  const wp=document.getElementById('wordPanel')
+  const spacer=document.getElementById('wordPanelSpacer')
+  if(!wp)return
+  function onScroll(){
+    const rect=wp.getBoundingClientRect()
+    const shouldStick=!_wpSticky&&rect.top<0
+    const shouldUnstick=_wpSticky&&window.scrollY<(wp._origTop||0)
+    if(shouldStick){
+      wp._origTop=window.scrollY+rect.top
+      wp._origH=wp.offsetHeight
+      if(spacer){spacer.style.display='block';spacer.style.height=wp._origH+'px'}
+      wp.classList.add('sticky')
+      _wpSticky=true
+    } else if(shouldUnstick){
+      wp.classList.remove('sticky')
+      if(spacer)spacer.style.display='none'
+      _wpSticky=false
+    }
+  }
+  window.removeEventListener('scroll',onScroll)
+  window.addEventListener('scroll',onScroll,{passive:true})
+}
+
 function buildGrid(){
   const c=document.getElementById('grid');c.innerHTML='';grid=[]
   c.style.gridTemplateColumns='repeat('+COLS+',1fr)'
@@ -3959,6 +4009,13 @@ function updateGameBar(){
    SCROLL TO GRID (mobile — called on game start)
 ══════════════════════════════════════════════════ */
 function scrollToGrid(){
+  initStickyWordPanel()
+  // reset sticky state on new game
+  const wp=document.getElementById('wordPanel')
+  if(wp){wp.classList.remove('sticky');_wpSticky=false}
+  const spacer=document.getElementById('wordPanelSpacer')
+  if(spacer)spacer.style.display='none'
+
   if(window.innerWidth>1060)return
   const gw=document.getElementById('gridWrap')
   if(gw)setTimeout(()=>gw.scrollIntoView({behavior:'smooth',block:'start'}),350)
