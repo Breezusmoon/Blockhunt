@@ -1573,7 +1573,7 @@ body{padding-top:env(safe-area-inset-top)}
     </div>
     <div class="omsg" id="omsg"></div>
     <div class="obtns">
-      <button class="btn btn-green" onclick="playAgain()">▶ Play Again</button>
+      <button class="btn btn-green" id="playAgainBtn" onclick="playAgain()">▶ Play Again</button>
       <button class="btn btn-purple" onclick="openShare()">📤 Share</button>
       <button class="btn btn-orange" onclick="createChallenge()" id="v1ChalBtn">⚔️ Challenge</button>
       <button class="btn btn-ghost" onclick="closeOv()">✕</button>
@@ -2758,6 +2758,11 @@ function renderTourneyBoard(){
 function updateTopBar(){
   const pool=todayEntries.length*getEntryFee()*0.9
   const pbPool=document.getElementById('pbPool');if(pbPool)pbPool.textContent=pool.toFixed(3)
+  // Update mode card prize displays
+  const easyCount=todayEntries.filter(e=>e.diff==='easy').length||0
+  const hardCount=todayEntries.filter(e=>e.diff==='hard').length||0
+  const ep=document.getElementById('easyPrize');if(ep)ep.textContent=(easyCount>0?(easyCount*ENTRY_FEES.easy*0.9).toFixed(3)+' AVAX':'No entries yet')
+  const hp=document.getElementById('hardPrize');if(hp)hp.textContent=(hardCount>0?(hardCount*ENTRY_FEES.hard*0.9).toFixed(3)+' AVAX':'No entries yet')
   const pbFeeEl=document.getElementById('pbFee');if(pbFeeEl)pbFeeEl.textContent=getEntryFee().toFixed(3)
   {var _fx35=document.getElementById('pbPlayers');if(_fx35)_fx35.textContent=todayEntries.length}
   // Update mode card prize displays
@@ -3270,8 +3275,40 @@ function showOv(o){
   if(o.showPrize){pp.style.display='block';const p=o.prizes||[],dist=todayEntries.length*getEntryFee()*.9;document.getElementById('opr1').innerHTML=`<span>🥇 1st (50%)</span><span>${(p[0]||(dist*.5)).toFixed(3)} AVAX</span>`;document.getElementById('opr2').innerHTML=`<span>🥈 2nd (30%)</span><span>${(p[1]||(dist*.3)).toFixed(3)} AVAX</span>`;document.getElementById('opr3').innerHTML=`<span>🥉 3rd (20%)</span><span>${(p[2]||(dist*.2)).toFixed(3)} AVAX</span>`;const yours=o.rank<=3?(o.prizes||[])[o.rank-1]||0:0;document.getElementById('oprYou').innerHTML=`<span>Your Payout</span><span style="color:${yours>0?'var(--kaspa)':'var(--dim)'}">${yours>0?yours.toFixed(3)+' AVAX':'—'}</span>`}
   else{pp.style.display='none'}
   {const _ov=document.getElementById('ov');if(_ov)_ov.classList.add('show')}
+  // Auto-reset: start 5s countdown, then auto play-again
+  clearTimeout(_autoResetTimer)
+  _clearResetCountdown()
+  _autoResetTimer=setTimeout(()=>{
+    _startAutoReset(5)
+    _autoResetTimer=setTimeout(()=>playAgain(),5000)
+  },1500) // wait 1.5s before countdown starts
 }
-function playAgain(){closeOv();setTimeout(()=>{if(isDailyMode){toast('Come back tomorrow for a new daily challenge! 🌙');isDailyMode=false}else{training?startTraining():wallet?enterTournament():startTraining()}},60)}
+function playAgain(){
+  clearTimeout(_autoResetTimer)
+  _clearResetCountdown()
+  closeOv()
+  setTimeout(()=>{
+    if(isDailyMode){toast('Come back tomorrow for a new daily challenge! 🌙');isDailyMode=false;startTraining()}
+    else{training?startTraining():wallet?enterTournament():startTraining()}
+  },60)
+}
+let _autoResetTimer=null
+function _clearResetCountdown(){
+  clearInterval(_autoResetInterval)
+  _autoResetInterval=null
+  const btn=document.getElementById('playAgainBtn')
+  if(btn)btn.textContent='▶ Play Again'
+}
+let _autoResetInterval=null
+function _startAutoReset(delaySec){
+  let left=delaySec
+  _autoResetInterval=setInterval(()=>{
+    left--
+    const btn=document.getElementById('playAgainBtn')
+    if(btn)btn.textContent=`▶ Play Again (${left}s)`
+    if(left<=0){_clearResetCountdown();playAgain()}
+  },1000)
+}
 function closeOv(){const _e=document.getElementById('ov');if(_e)_e.classList.remove('show')}
 
 /* ══════════════════════════════════════════════════
@@ -3684,8 +3721,32 @@ function closeAchModal(){const _e=document.getElementById('achModal');if(_e)_e.c
 /* ══════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   SEED LEADERBOARDS — populate on first visit
+══════════════════════════════════════════════════ */
+function _seedLeaderboardsIfEmpty(){
+  const SIM_NAMES=['CryptoKing👑','HODLmaster🔥','AVAXmaxi','SatoshiHunter','DeFiWizard🧙',
+    'MoonHunter🌙','BlockBreaker','ChainRunner','TokenSlayer','HashHero','WhaleMover','AlphaSeeker']
+  if(!lb.length){
+    const rr=mulberry32(getDailySeed()+999)
+    const times=[18.4,22.1,27.8,31.2,38.6,44.1,51.3,58.7,67.2,74.9]
+    lb=times.map((t,i)=>({name:SIM_NAMES[i%SIM_NAMES.length],time:t+rr()*4,diff:'easy'}))
+    saveLb()
+  }
+  if(!dailyLb.length){
+    const rr2=mulberry32(getDailySeed()+777)
+    const dtimes=[21.3,28.7,34.1,40.2,47.8,55.3]
+    dailyLb=dtimes.map((t,i)=>({name:SIM_NAMES[(i+3)%SIM_NAMES.length],time:t+rr2()*5}))
+    saveDailyLb()
+  }
+}
+
+
 function init(){
-  loadData();loadAch();loadReferral();renderLb();renderDailyLb();renderSt();renderProfile();renderAchStrip();setDiff('easy',true);updStrk()
+  loadData();loadAch();loadReferral();
+  // Seed simulated leaderboard scores on first visit so boards aren't empty
+  _seedLeaderboardsIfEmpty();
+  renderLb();renderDailyLb();renderSt();renderProfile();renderAchStrip();setDiff('easy',true);updStrk()
   // Load active pack (saved choice or weekly auto-rotation)
   const savedPack=localStorage.getItem('bh7_pack')
   activePack=(savedPack&&WORD_PACKS[savedPack])?savedPack:getWeeklyPackId()
