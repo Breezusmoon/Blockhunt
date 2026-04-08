@@ -2709,7 +2709,8 @@ function loadTourneyData(){
     for(let i=0;i<n;i++){
       const nm=T_NAMES[Math.floor(rr()*T_NAMES.length)]
       const t=18+rr()*85 // times between 18s and 103s
-      todayEntries.push({name:nm,time:parseFloat(t.toFixed(2)),mine:false})
+      const simDiff=rr()<0.5?'easy':'hard'
+      todayEntries.push({name:nm,time:parseFloat(t.toFixed(2)),mine:false,diff:simDiff})
     }
     todayEntries.sort((a,b)=>a.time-b.time)
   }
@@ -2756,13 +2757,14 @@ function renderTourneyBoard(){
 }
 
 function updateTopBar(){
-  const pool=todayEntries.length*getEntryFee()*0.9
+  const easyEntries=todayEntries.filter(e=>e.diff==='easy').length
+  const hardEntries=todayEntries.filter(e=>e.diff==='hard').length
+  const weeklyEntries=todayEntries.filter(e=>e.diff==='weekly').length
+  const pool=(easyEntries*ENTRY_FEES.easy+hardEntries*ENTRY_FEES.hard+weeklyEntries*(ENTRY_FEES.weekly||0.1))*0.9
   const pbPool=document.getElementById('pbPool');if(pbPool)pbPool.textContent=pool.toFixed(3)
   // Update mode card prize displays
-  const easyCount=todayEntries.filter(e=>e.diff==='easy').length||0
-  const hardCount=todayEntries.filter(e=>e.diff==='hard').length||0
-  const ep=document.getElementById('easyPrize');if(ep)ep.textContent=(easyCount>0?(easyCount*ENTRY_FEES.easy*0.9).toFixed(3)+' AVAX':'No entries yet')
-  const hp=document.getElementById('hardPrize');if(hp)hp.textContent=(hardCount>0?(hardCount*ENTRY_FEES.hard*0.9).toFixed(3)+' AVAX':'No entries yet')
+  const ep=document.getElementById('easyPrize');if(ep)ep.textContent=(easyEntries>0?(easyEntries*ENTRY_FEES.easy*0.9).toFixed(3)+' AVAX':'No entries yet')
+  const hp=document.getElementById('hardPrize');if(hp)hp.textContent=(hardEntries>0?(hardEntries*ENTRY_FEES.hard*0.9).toFixed(3)+' AVAX':'No entries yet')
   const pbFeeEl=document.getElementById('pbFee');if(pbFeeEl)pbFeeEl.textContent=getEntryFee().toFixed(3)
   {var _fx35=document.getElementById('pbPlayers');if(_fx35)_fx35.textContent=todayEntries.length}
   // Update mode card prize displays
