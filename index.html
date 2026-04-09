@@ -99,12 +99,12 @@
   --r:10px;--rl:16px;--rxl:24px;
 
   /* Tile */
-  --tile-bg:linear-gradient(145deg,#1a0800 0%,#2a1000 100%);
-  --tile-bg-h:linear-gradient(145deg,#2a1200 0%,#3a1800 100%);
-  --tile-bg-found:linear-gradient(145deg,#003300 0%,#001a00 100%);
-  --tile-border:rgba(255,107,0,.55);
+  --tile-bg:linear-gradient(145deg,#110820 0%,#0a0418 100%);
+  --tile-bg-h:linear-gradient(145deg,#1a0835 0%,#0e0420 100%);
+  --tile-bg-found:linear-gradient(145deg,#1a0900 0%,#300f00 100%);
+  --tile-border:rgba(157,78,221,.3);
   --tile-border-h:rgba(255,107,0,.9);
-  --tile-shadow:0 3px 0 rgba(0,0,0,.85),inset 0 1px 0 rgba(255,107,0,.2);
+  --tile-shadow:0 3px 0 rgba(0,0,0,.85),inset 0 1px 0 rgba(157,78,221,.15);
   --tile-shadow-active:0 0 0 2px var(--orange),0 0 30px var(--kaspa-g),0 6px 0 rgba(0,0,0,.6),inset 0 2px 0 rgba(255,150,0,.3);
 }
 
@@ -686,7 +686,7 @@ display:none;pointer-events:none;
   border-radius:6px;aspect-ratio:1;
   display:flex;align-items:center;justify-content:center;
   font-weight:700;font-family:var(--fo);
-  color:rgba(255,175,70,.95);
+  color:rgba(235,215,255,.9);
   font-size:clamp(10px,2vw,15px);letter-spacing:1px;
   cursor:pointer;position:relative;min-width:0;min-height:0;
   -webkit-touch-callout:none;-webkit-user-select:none;touch-action:none;-ms-touch-action:none;
@@ -697,8 +697,8 @@ display:none;pointer-events:none;
 .tile:hover{
   background:var(--tile-bg-h);
   transform:translateY(-2px) scale(1.06);
-  box-shadow:0 5px 0 rgba(0,0,0,.8),0 0 16px rgba(157,78,221,.25),inset 0 1px 0 rgba(200,150,255,.2);
-  color:rgba(220,190,255,.85);border-color:rgba(157,78,221,.45);
+  box-shadow:0 5px 0 rgba(0,0,0,.8),0 0 20px rgba(157,78,221,.35),inset 0 1px 0 rgba(200,150,255,.25);
+  color:rgba(255,255,255,.95);border-color:rgba(157,78,221,.6);
 }
 .tile.active{
   background:linear-gradient(145deg,#FF9500 0%,#FF6B00 50%,#CC3300 100%);
@@ -708,9 +708,9 @@ display:none;pointer-events:none;
   font-size:112%;text-shadow:0 0 12px rgba(255,214,10,.6);
 }
 .tile.found{
-  background:var(--tile-bg-found);
-  border-color:rgba(255,107,0,.5);color:var(--gold);
-  text-shadow:0 0 12px rgba(255,214,10,.5);
+  background:linear-gradient(145deg,#031503 0%,#020d02 100%);
+  border-color:rgba(57,255,20,.75);color:#39FF14;
+  text-shadow:0 0 14px rgba(57,255,20,.8);
   box-shadow:0 2px 0 rgba(0,0,0,.7),inset 0 1px 0 rgba(255,107,0,.15),0 0 10px rgba(255,107,0,.12);
 }
 .tile.wrong{
