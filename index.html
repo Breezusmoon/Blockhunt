@@ -585,6 +585,7 @@ display:none !important;
 /* ── CENTER ── */
 #cc{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2}
 #wordPanel{
+  display:none;
   width:100%;max-width:min(660px,calc(100vw - 20px));
   background:linear-gradient(145deg,rgba(14,9,25,.98),rgba(8,4,16,.99));
   border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;
@@ -1545,6 +1546,7 @@ body{padding-top:env(safe-area-inset-top)}
       </div>
     </div>
 
+    <div id="startWordBtn" onclick="activateGame()" style="display:none;width:100%;max-width:min(660px,calc(100vw - 20px));margin:10px auto;padding:18px;background:linear-gradient(135deg,#ff6b00,#ff8c00);border-radius:12px;font-family:var(--fo);font-size:16px;font-weight:900;letter-spacing:3px;color:#fff;text-align:center;cursor:pointer;box-shadow:0 0 30px rgba(255,107,0,.4);">&#9889; START &#8212; REVEAL WORDS</div>
     <div id="wordPanel">
       <div class="word-panel-title">🔍 Find these words</div>
       <div id="wlist"></div>
@@ -2955,7 +2957,7 @@ function startTraining(){
     const _gwA=document.getElementById('gridWrap');if(_gwA)_gwA.classList.add('active')
     setTEl('2:00','');t0=Date.now();gameOn=true;stats.played++;saveSt();renderSt()
     DRAG.resize();rippleIn()
-    showGameBar();scrollToGrid();runTimer()
+    showGameBar();scrollToGrid();showStartWordBtn()
   })
 }
 function doEnterGame(){
@@ -2969,7 +2971,7 @@ function doEnterGame(){
     buildGrid();renderWords();updProg()
     var gw=document.getElementById('gridWrap');if(gw)gw.classList.add('active')
     setTEl('2:00','');t0=Date.now();gameOn=true;stats.played++;saveSt();renderSt()
-    DRAG.resize();rippleIn();showGameBar();scrollToGrid();runTimer()
+    DRAG.resize();rippleIn();showGameBar();scrollToGrid();showStartWordBtn()
   })
 }
 
@@ -3027,7 +3029,7 @@ async function _doEnterTournament(){
       COLS=cfg.cols;awords=pickWords();found=[];path=[]
       buildGrid();renderWords();updProg()
       const _gwA=document.getElementById('gridWrap');if(_gwA)_gwA.classList.add('active')
-      setTEl('2:00','');t0=Date.now();gameOn=true;gameFinished=false;stats.played++;saveSt();renderSt();DRAG.resize();rippleIn();showGameBar();scrollToGrid();runTimer()
+      setTEl('2:00','');t0=Date.now();gameOn=true;gameFinished=false;stats.played++;saveSt();renderSt();DRAG.resize();rippleIn();showGameBar();scrollToGrid();showStartWordBtn()
     })
   }catch(e){
     {const _e=document.getElementById('entbtn');if(_e){_e.disabled=false;_e.textContent='⚡ Enter Tournament — '+getEntryFee().toFixed(3)+' AVAX'}}
@@ -3584,7 +3586,7 @@ function accept1v1(){
     setTEl('2:00','');t0=Date.now();gameOn=true;gameFinished=false
     stats.played++;saveSt();renderSt()
     startOpponentTracker()
-    DRAG.resize();rippleIn();showGameBar();scrollToGrid();runTimer()
+    DRAG.resize();rippleIn();showGameBar();scrollToGrid();showStartWordBtn()
   })
 }
 
@@ -3962,6 +3964,17 @@ function init(){
       }
     }catch(e){/* silent fail — wallet not connected */}
   },500)
+}
+function showStartWordBtn(){
+  const btn=document.getElementById('startWordBtn');
+  if(btn)btn.style.display='block';
+}
+function activateGame(){
+  const btn=document.getElementById('startWordBtn');
+  if(btn)btn.style.display='none';
+  const wp=document.getElementById('wordPanel');
+  if(wp)wp.style.display='';
+  t0=Date.now();gameOn=true;runTimer();
 }
 function dismissIntro(){
   const el=document.getElementById('intro')
