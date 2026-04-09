@@ -1539,7 +1539,7 @@ body{padding-top:env(safe-area-inset-top)}
   <!-- CENTER -->
   <div id="cc">
     <!-- TIMER ABOVE GRID -->
-    <div id="gridTimerWrap" style="display:none">
+    <div id="gridTimerWrap">
       <div id="gridTimerInner">
         <div id="gridTimerLabel">TIME REMAINING</div>
         <div id="timer">2:00</div>
@@ -1551,7 +1551,7 @@ body{padding-top:env(safe-area-inset-top)}
     </div>
 
     <div id="startWordBtn" onclick="activateGame()" style="display:none;width:100%;max-width:min(660px,calc(100vw - 20px));margin:10px auto;padding:18px;background:linear-gradient(135deg,#ff6b00,#ff8c00);border-radius:12px;font-family:var(--fo);font-size:16px;font-weight:900;letter-spacing:3px;color:#fff;text-align:center;cursor:pointer;box-shadow:0 0 30px rgba(255,107,0,.4);">&#9889; START &#8212; REVEAL WORDS</div>
-    <div id="wordPanel" style="display:none">
+    <div id="wordPanel">
       <div class="word-panel-title">🔍 Find these words</div>
       <div id="wlist"></div>
     </div>
@@ -2227,7 +2227,7 @@ function startDaily(){
     COLS=13;awords=words;found=[];path=[]
     buildGrid();renderWords();updProg()
     const _gwA=document.getElementById('gridWrap');if(_gwA)_gwA.classList.add('active')
-    setTEl('2:00','');showStartGameBtn()
+    setTEl('2:00','');t0=Date.now();gameOn=true;stats.played++;saveSt();renderSt();renderWords();runTimer()
   })
 }
 
@@ -3968,7 +3968,7 @@ function init(){
   },500)
 }
 function showStartWordBtn(){
-  var b=document.getElementById('startGameBtn');if(b)b.style.display='block';
+  var b=document.getElementById('startWordBtn');if(b)b.style.display='';
 }
 function activateGame(){
   const btn=document.getElementById('startWordBtn');
