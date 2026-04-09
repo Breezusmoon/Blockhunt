@@ -1539,12 +1539,13 @@ body{padding-top:env(safe-area-inset-top)}
   <!-- CENTER -->
   <div id="cc">
     <!-- TIMER ABOVE GRID -->
-    <div id="gridTimerWrap">
+    <div id="gridTimerWrap" style="display:none">
       <div id="gridTimerInner">
         <div id="gridTimerLabel">TIME REMAINING</div>
         <div id="timer">2:00</div>
       </div>
     </div>
+    <div id="startGameBtn" onclick="playerStartGame()" style="display:none;width:100%;max-width:min(660px,calc(100vw - 20px));margin:10px auto;padding:20px;background:linear-gradient(135deg,#ff6b00,#ff8c00);border-radius:14px;font-family:var(--fo);font-size:18px;font-weight:900;letter-spacing:3px;color:#fff;text-align:center;cursor:pointer;box-shadow:0 0 40px rgba(255,107,0,.5);">⚡ START — REVEAL WORDS</div>
 
     <div id="startWordBtn" onclick="activateGame()" style="display:none;width:100%;max-width:min(660px,calc(100vw - 20px));margin:10px auto;padding:18px;background:linear-gradient(135deg,#ff6b00,#ff8c00);border-radius:12px;font-family:var(--fo);font-size:16px;font-weight:900;letter-spacing:3px;color:#fff;text-align:center;cursor:pointer;box-shadow:0 0 30px rgba(255,107,0,.4);">&#9889; START &#8212; REVEAL WORDS</div>
     <div id="wordPanel">
@@ -2223,9 +2224,7 @@ function startDaily(){
     COLS=13;awords=words;found=[];path=[]
     buildGrid();renderWords();updProg()
     const _gwA=document.getElementById('gridWrap');if(_gwA)_gwA.classList.add('active')
-    setTEl('2:00','');t0=Date.now();gameOn=true
-    stats.played++;saveSt();renderSt()
-    runTimer()
+    setTEl('2:00','');showStartGameBtn()
   })
 }
 
@@ -2957,7 +2956,7 @@ function startTraining(){
     const _gwA=document.getElementById('gridWrap');if(_gwA)_gwA.classList.add('active')
     setTEl('2:00','');t0=Date.now();gameOn=true;stats.played++;saveSt();renderSt()
     DRAG.resize();rippleIn()
-    showGameBar();scrollToGrid();showStartWordBtn()
+    showGameBar();scrollToGrid();showStartGameBtn()
   })
 }
 function doEnterGame(){
@@ -3975,6 +3974,21 @@ function activateGame(){
   const wp=document.getElementById('wordPanel');
   if(wp)wp.style.display='';
   t0=Date.now();gameOn=true;runTimer();
+}
+function showStartGameBtn(){
+  var b=document.getElementById('startGameBtn');
+  if(b)b.style.display='';
+}
+function playerStartGame(){
+  var b=document.getElementById('startGameBtn');
+  if(b)b.style.display='none';
+  var tw=document.getElementById('gridTimerWrap');
+  if(tw)tw.style.display='';
+  var wp=document.getElementById('wordPanel');
+  if(wp)wp.style.display='';
+  t0=Date.now();gameOn=true;
+  stats.played++;saveSt();renderSt();
+  runTimer();
 }
 function dismissIntro(){
   const el=document.getElementById('intro')
