@@ -1937,7 +1937,7 @@ function closePacks(){const _e=document.getElementById('packModal');if(_e)_e.cla
 /* ══════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════ */
-const ENTRY_FEES={easy:0.05,hard:0.085,weekly:0.1}  // easy=0.05 hard=0.085 weekly=0.1
+const ENTRY_FEES={easy:0.05,hard:0.085,weekly:0.1}  // matches BlockHunt.sol constants
 const ENTRY_AVAX=0.085 // fallback (hard rate)
 const HINT_AVAX=0.02
 const HINT_WEI='0x'+Math.floor(HINT_AVAX*1e18).toString(16)
@@ -1954,15 +1954,22 @@ const AVAX_ADDRESS = CONTRACT_ADDRESS // backwards compat
 
 // Minimal ABI — only functions the game needs
 const CONTRACT_ABI = [
-  // Read
-  {"inputs":[],"name":"getCurrentRound","outputs":[{"name":"id","type":"uint256"},{"name":"startTime","type":"uint256"},{"name":"endTime","type":"uint256"},{"name":"prizePool","type":"uint256"},{"name":"playerCount","type":"uint256"},{"name":"settled","type":"bool"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"name":"player","type":"address"}],"name":"hasPlayerEntered","outputs":[{"type":"bool"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"name":"difficulty","type":"string"}],"name":"getEntryFee","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"name":"player","type":"address"},{"name":"roundId","type":"uint256"}],"name":"getPlayerScore","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-  // Write
-  {"inputs":[{"name":"difficulty","type":"string"}],"name":"enterRound","outputs":[],"stateMutability":"payable","type":"function"},
-  {"inputs":[{"name":"timeMs","type":"uint256"}],"name":"submitScore","outputs":[],"stateMutability":"nonpayable","type":"function"}
+  {"inputs":[],"name":"getCurrentEasyRound","outputs":[{"name":"id","type":"uint256"},{"name":"endTime","type":"uint256"},{"name":"pool","type":"uint256"},{"name":"playerCount","type":"uint256"},{"name":"settled","type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"getCurrentHardRound","outputs":[{"name":"id","type":"uint256"},{"name":"endTime","type":"uint256"},{"name":"pool","type":"uint256"},{"name":"playerCount","type":"uint256"},{"name":"settled","type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"getCurrentWeeklyRound","outputs":[{"name":"id","type":"uint256"},{"name":"endTime","type":"uint256"},{"name":"pool","type":"uint256"},{"name":"playerCount","type":"uint256"},{"name":"settled","type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"player","type":"address"}],"name":"hasEnteredEasy","outputs":[{"type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"player","type":"address"}],"name":"hasEnteredHard","outputs":[{"type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"player","type":"address"}],"name":"hasEnteredWeekly","outputs":[{"type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"enterEasy","outputs":[],"stateMutability":"payable","type":"function"},
+  {"inputs":[],"name":"enterHard","outputs":[],"stateMutability":"payable","type":"function"},
+  {"inputs":[],"name":"enterWeekly","outputs":[],"stateMutability":"payable","type":"function"},
+  {"inputs":[{"name":"timeMs","type":"uint256"}],"name":"submitScoreEasy","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"timeMs","type":"uint256"}],"name":"submitScoreHard","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"name":"timeMs","type":"uint256"}],"name":"submitScoreWeekly","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"settleDaily","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"settleWeekly","outputs":[],"stateMutability":"nonpayable","type":"function"}
 ]
+
 
 // ABI encoding helpers (no ethers.js needed — raw provider)
 function encodeUint256(n){return BigInt(n).toString(16).padStart(64,'0')}
@@ -2773,11 +2780,11 @@ setTimeout(async () => {
 }, 600)
 
 async function sendEntryFee(){
-  // Calls enterRound(difficulty) on BlockHunt contract
   if(!wallet||!prov)throw new Error('Not connected')
-  const validDiff=['easy','hard','weekly'].includes(diff)?diff:'easy' // uses global diff var
-  // Encode enterRound(string difficulty)
-  const data=selector('enterRound(string)')+encodeString(validDiff)
+  // Call mode-specific entry function
+  const fnMap={easy:'enterEasy()',hard:'enterHard()',weekly:'enterWeekly()'}
+  const fn=fnMap[diff]||'enterEasy()'
+  const data=selector(fn)
   const txHash=await prov.request({method:'eth_sendTransaction',params:[{
     from:wallet,
     to:CONTRACT_ADDRESS,
@@ -2971,7 +2978,9 @@ async function enterTournament(){
   if(!wallet){openWM();return}
   // Check if already entered this round on-chain
   if(prov&&wallet){
-    const data=selector('hasPlayerEntered(address)')+'000000000000000000000000'+wallet.slice(2)
+    const enteredFnMap={easy:'hasEnteredEasy(address)',hard:'hasEnteredHard(address)',weekly:'hasEnteredWeekly(address)'}
+    const enteredFn=enteredFnMap[diff]||'hasEnteredEasy(address)'
+    const data=selector(enteredFn)+'000000000000000000000000'+wallet.slice(2)
     prov.request({method:'eth_call',params:[{to:CONTRACT_ADDRESS,data:data},'latest']})
       .then(r=>{if(r&&r!=='0x'&&parseInt(r,16)===1){toast('✅ Already entered — play now!');doEnterGame();return}
                 _doEnterTournament()}).catch(()=>_doEnterTournament())
@@ -3319,7 +3328,9 @@ async function onWin(){
     try{
       const timeMs=Math.round(ft*1000)
       // submitScore(uint256 timeMs)
-      const data=selector('submitScore(uint256)')+encodeUint256(timeMs)
+      const fnScoreMap={easy:'submitScoreEasy(uint256)',hard:'submitScoreHard(uint256)',weekly:'submitScoreWeekly(uint256)'}
+      const scoreFn=fnScoreMap[diff]||'submitScoreEasy(uint256)'
+      const data=selector(scoreFn)+encodeUint256(timeMs)
       await prov.request({method:'eth_sendTransaction',params:[{
         from:wallet,to:CONTRACT_ADDRESS,data:data,gas:'0x'+(80000).toString(16)
       }]})
@@ -4702,13 +4713,13 @@ function scheduleLocalNotif(){
 /* ── Prize pool / player count from contract ── */
 function updatePB(){
   if(prov&&CONTRACT_ADDRESS&&!CONTRACT_ADDRESS.startsWith('0x000')){
-    const data=selector('getCurrentRound()')
+    const data=selector('getCurrentEasyRound()')
     prov.request({method:'eth_call',params:[{to:CONTRACT_ADDRESS,data:data},'latest']})
       .then(result=>{
         if(!result||result==='0x')return
         const hex=result.slice(2)
-        const prizePool=parseInt(hex.slice(96,160),16)
-        const playerCount=parseInt(hex.slice(128,192),16)
+        const prizePool=parseInt(hex.slice(128,192),16)
+        const playerCount=parseInt(hex.slice(192,256),16)
         const poolAvax=(prizePool/1e18).toFixed(3)
         const el=document.getElementById('pbPool');if(el)el.textContent=poolAvax
         const elP=document.getElementById('pbPlayers');if(elP)elP.textContent=playerCount
