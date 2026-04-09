@@ -2552,7 +2552,7 @@ function renderWalletList(wallets) {
   if(!list) return
   if(!wallets.length) {
     // Still nothing — Brave may need direct eth_requestAccounts trigger
-    msg.textContent = 'No extension found. If you have Core or MetaMask installed:'
+    msg.textContent = isMobileDevice() ? 'Open in your wallet app to play' : 'No wallet extension detected'
     msg.style.color = '#ffb300'
     list.innerHTML = `
       <button class="wo" onclick="connectDirect()" type="button" style="background:rgba(255,107,0,.15);border-color:rgba(255,107,0,.4)">
@@ -2581,17 +2581,53 @@ function renderWalletList(wallets) {
   }
 }
 
+function isMobileDevice(){
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)
+}
+
 function openWM() {
   const modal = document.getElementById('wm')
   const list  = document.getElementById('wm-list')
   const msg   = document.getElementById('wm-msg')
   if(!modal) return
-  // Show modal immediately
   modal.classList.add('show')
+
+  // On mobile: window.ethereum only exists inside a wallet's built-in browser
+  // Check if already inside a wallet browser first
+  const hasInjected = !!(window.ethereum || window.avalanche)
+
+  if(isMobileDevice() && !hasInjected) {
+    // Mobile — no injected provider — show deep links to open in wallet browser
+    msg.textContent = 'Open in your wallet app to connect'
+    msg.style.color = 'var(--muted)'
+    const gameUrl = encodeURIComponent(window.location.href)
+    list.innerHTML = `
+      <button class="wo" onclick="window.location.href='https://core.app/browser/?url=${gameUrl}'" type="button" style="background:rgba(255,107,0,.12);border-color:rgba(255,107,0,.5)">
+        <span class="wi">🔺</span>
+        <span class="win2">
+          <span class="wn">Open in Core Wallet</span>
+          <span style="font-size:9px;color:var(--muted);display:block;margin-top:2px">Best for AVAX — tap to open</span>
+        </span>
+        <span class="wa">›</span>
+      </button>
+      <button class="wo" onclick="window.location.href='https://metamask.app.link/dapp/${window.location.host+window.location.pathname}'" type="button" style="background:rgba(255,150,0,.08);border-color:rgba(255,150,0,.35)">
+        <span class="wi">🦊</span>
+        <span class="win2">
+          <span class="wn">Open in MetaMask</span>
+          <span style="font-size:9px;color:var(--muted);display:block;margin-top:2px">Tap to open in MetaMask browser</span>
+        </span>
+        <span class="wa">›</span>
+      </button>
+      <div style="border-top:1px solid rgba(255,255,255,.07);margin:10px 0 6px;padding-top:10px;font-family:var(--fn);font-size:9px;color:var(--dim);text-align:center;line-height:1.7">
+        Already in a wallet browser? <span style="color:var(--kaspa);cursor:pointer" onclick="renderWalletList(detectWallets())">Tap here to connect</span>
+      </div>`
+    return
+  }
+
+  // Desktop or already inside wallet browser — scan for injected providers
   msg.textContent = 'Scanning for wallets...'
   msg.style.color = ''
-  list.innerHTML  = '<div style="text-align:center;padding:16px;font-family:var(--fn);font-size:11px;color:var(--muted)">⏳ Detecting extensions...</div>'
-  // Scan AFTER modal open — Brave unlocks injected providers on user gesture
+  list.innerHTML = '<div style="text-align:center;padding:16px;font-family:var(--fn);font-size:11px;color:var(--muted)">⏳ Detecting wallets...</div>'
   setTimeout(() => renderWalletList(detectWallets()), 150)
 }
 
