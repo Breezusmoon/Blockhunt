@@ -1456,10 +1456,14 @@ body{padding-top:env(safe-area-inset-top)}
         <div class="mode-fee">0.085 <span>AVAX</span></div>
       </div>
       <div class="mode-title">Competitive</div>
-      <div class="mode-desc">10 words · 8 directions · 1 hint · 2 min timer.<br>Words go diagonally. Top 3 split the pool.</div>
+      <div class="mode-desc">10 words · 8 directions · 1 hint · 2 min timer.<br>Fastest solver wins flat AVAX. No ties.</div>
       <div class="mode-prize-row">
-        <span class="mode-prize-label">🏆 Prize Pool</span>
-        <span class="mode-prize-val" id="hardPrize">—</span>
+        <span class="mode-prize-label">🥇 1st wins</span>
+        <span class="mode-prize-val" style="color:var(--gold)">1.00 AVAX</span>
+      </div>
+      <div class="mode-prize-row" style="margin-top:4px">
+        <span class="mode-prize-label">🥈 2nd wins</span>
+        <span class="mode-prize-val" style="color:var(--muted)">0.50 AVAX</span>
       </div>
       <button class="mode-btn hard-btn" onclick="tryEnter('hard')" id="hardEntBtn">🔗 Connect Wallet to Enter</button>
       <button class="mode-train-btn" onclick="setDiff('hard');startTraining()">▶ Try Free First</button>
