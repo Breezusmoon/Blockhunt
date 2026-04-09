@@ -1628,10 +1628,9 @@ body{padding-top:env(safe-area-inset-top)}
     <div id="oprize">
       <div class="opr-t">💰 Prize Distribution</div>
       <div class="opr-row"><span>Total Pool</span><span>20 AVAX</span></div>
-      <div class="opr-row"><span>House (10%)</span><span>2 AVAX</span></div>
-      <div class="opr-row" id="opr1"><span>🥇 1st (50%)</span><span>9 AVAX</span></div>
-      <div class="opr-row" id="opr2"><span>🥈 2nd (30%)</span><span>5.4 AVAX</span></div>
-      <div class="opr-row" id="opr3"><span>🥉 3rd (20%)</span><span>3.6 AVAX</span></div>
+      <div class="opr-row" id="opr1"><span>🥇 1st</span><span>9 AVAX</span></div>
+      <div class="opr-row" id="opr2"><span>🥈 2nd</span><span>5.4 AVAX</span></div>
+      <div class="opr-row" id="opr3"><span>🥉 3rd</span><span>3.6 AVAX</span></div>
       <div class="opr-row" id="oprYou" style="color:var(--gold);font-size:12px"><span>Your Payout</span><span>Pending...</span></div>
     </div>
     <div class="omsg" id="omsg"></div>
@@ -3427,7 +3426,7 @@ function showOv(o){
   {var _fx49=document.getElementById('obst');if(_fx49)_fx49.textContent=o.bst};{var _fx50=document.getElementById('odif');if(_fx50)_fx50.textContent=o.dif}
   {var _fx51=document.getElementById('omsg');if(_fx51)_fx51.textContent=o.msg}
   const pp=document.getElementById('oprize')
-  if(o.showPrize){pp.style.display='block';const p=o.prizes||[],dist=todayEntries.length*getEntryFee()*.9;document.getElementById('opr1').innerHTML=`<span>🥇 1st (50%)</span><span>${(p[0]||(dist*.5)).toFixed(3)} AVAX</span>`;document.getElementById('opr2').innerHTML=`<span>🥈 2nd (30%)</span><span>${(p[1]||(dist*.3)).toFixed(3)} AVAX</span>`;document.getElementById('opr3').innerHTML=`<span>🥉 3rd (20%)</span><span>${(p[2]||(dist*.2)).toFixed(3)} AVAX</span>`;const yours=o.rank<=3?(o.prizes||[])[o.rank-1]||0:0;document.getElementById('oprYou').innerHTML=`<span>Your Payout</span><span style="color:${yours>0?'var(--kaspa)':'var(--dim)'}">${yours>0?yours.toFixed(3)+' AVAX':'—'}</span>`}
+  if(o.showPrize){pp.style.display='block';const p=o.prizes||[],pool=todayEntries.length*getEntryFee(),dist=pool*.95;document.getElementById('opr1').innerHTML=`<span>🥇 1st</span><span>${(p[0]||(dist*.7)).toFixed(3)} AVAX</span>`;document.getElementById('opr2').innerHTML=`<span>🥈 2nd</span><span>${(p[1]||(dist*.2)).toFixed(3)} AVAX</span>`;document.getElementById('opr3').innerHTML=`<span>🥉 3rd</span><span>${(p[2]||(dist*.074)).toFixed(3)} AVAX</span>`;const yours=o.rank<=3?(o.prizes||[])[o.rank-1]||0:0;document.getElementById('oprYou').innerHTML=`<span>Your Payout</span><span style="color:${yours>0?'var(--kaspa)':'var(--dim)'}">${yours>0?yours.toFixed(3)+' AVAX':'—'}</span>`}
   else{pp.style.display='none'}
   {const _ov=document.getElementById('ov');if(_ov)_ov.classList.add('show')}
   // No auto-reset — player chooses when to continue
