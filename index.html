@@ -833,7 +833,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0}
 .share-btns .btn{margin:0;flex:1}
 
 /* ── PROFILE MODAL ── */
-#profModal{display:none;position:fixed;inset:0;z-index:6000;align-items:center;justify-content:center;padding:20px;background:rgba(4,2,8,.96);backdrop-filter:blur(28px)}
+#profModal{display:none;position:fixed;inset:0;z-index:6000;align-items:flex-start;justify-content:center;padding:20px;padding-top:30px;background:rgba(4,2,8,.96);backdrop-filter:blur(28px);overflow-y:auto}
 #profModal.show{display:flex}
 #profBox{background:linear-gradient(165deg,rgba(14,9,25,.99),rgba(8,4,16,1));border:1px solid rgba(157,78,221,.2);border-radius:var(--rxl);padding:30px 32px;max-width:560px;width:100%;animation:opop .45s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 0 0 1px rgba(0,0,0,.7),0 30px 80px rgba(0,0,0,.8),0 0 60px rgba(157,78,221,.1)}
 .pm-title{font-family:var(--fo);font-size:20px;font-weight:700;margin-bottom:6px;letter-spacing:2px}
@@ -2428,7 +2428,7 @@ function selectChar(id){
     const sel=document.getElementById('pmSelChar')
     if(sel){
       sel.textContent=''
-      sel.style.backgroundImage=`url('${ch.img}')`
+      const cardEl=document.getElementById('charCard_'+ch.id);const cardPortrait=cardEl?cardEl.querySelector('.char-portrait-img'):null;sel.style.backgroundImage=cardPortrait?cardPortrait.style.backgroundImage:`url('${ch.emoji}')`;
       sel.style.boxShadow=`0 0 20px rgba(${ch.color},.5)`
       sel.style.borderColor=`rgba(${ch.color},.7)`
     }
