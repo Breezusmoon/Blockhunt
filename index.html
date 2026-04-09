@@ -585,6 +585,7 @@ display:none !important;
 /* ── CENTER ── */
 #cc{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2}
 #wordPanel{
+  display:none;
   width:100%;max-width:min(660px,calc(100vw - 20px));
   background:linear-gradient(145deg,rgba(14,9,25,.98),rgba(8,4,16,.99));
   border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;
@@ -1083,6 +1084,7 @@ body{padding-top:env(safe-area-inset-top)}
 
 /* ══ GRID TIMER — above the grid ══ */
 #gridTimerWrap{
+  display:none;
   width:100%;max-width:min(660px,calc(100vw - 20px));
   display:flex;justify-content:center;
 }
@@ -3967,7 +3969,7 @@ function init(){
   },500)
 }
 function showStartWordBtn(){
-  var b=document.getElementById('startWordBtn');if(b)b.style.display='';
+  var b=document.getElementById('startGameBtn');if(b)b.style.display='block';
 }
 function activateGame(){
   const btn=document.getElementById('startWordBtn');
@@ -3981,15 +3983,10 @@ function showStartGameBtn(){
   if(b)b.style.display='';
 }
 function playerStartGame(){
-  var b=document.getElementById('startGameBtn');
-  if(b)b.style.display='none';
-  var tw=document.getElementById('gridTimerWrap');
-  if(tw)tw.style.display='';
-  var wp=document.getElementById('wordPanel');
-  if(wp)wp.style.display='';
-  t0=Date.now();gameOn=true;
-  stats.played++;saveSt();renderSt();
-  renderWords();runTimer();
+  document.getElementById('startGameBtn').style.display='none';
+  document.getElementById('gridTimerWrap').style.display='';
+  document.getElementById('wordPanel').style.display='';
+  t0=Date.now();gameOn=true;stats.played++;saveSt();renderSt();renderWords();runTimer();
 }
 function dismissIntro(){
   const el=document.getElementById('intro')
