@@ -99,12 +99,12 @@
   --r:10px;--rl:16px;--rxl:24px;
 
   /* Tile */
-  --tile-bg:linear-gradient(145deg,#110820 0%,#0a0418 100%);
-  --tile-bg-h:linear-gradient(145deg,#1a0835 0%,#0e0420 100%);
-  --tile-bg-found:linear-gradient(145deg,#1a0900 0%,#300f00 100%);
-  --tile-border:rgba(157,78,221,.3);
+  --tile-bg:linear-gradient(145deg,#16082e 0%,#0d0520 100%);
+  --tile-bg-h:linear-gradient(145deg,#1e0a40 0%,#130628 100%);
+  --tile-bg-found:linear-gradient(145deg,#031503 0%,#020d02 100%);
+  --tile-border:rgba(157,78,221,.45);
   --tile-border-h:rgba(255,107,0,.9);
-  --tile-shadow:0 3px 0 rgba(0,0,0,.85),inset 0 1px 0 rgba(157,78,221,.15);
+  --tile-shadow:0 2px 0 rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);
   --tile-shadow-active:0 0 0 2px var(--orange),0 0 30px var(--kaspa-g),0 6px 0 rgba(0,0,0,.6),inset 0 2px 0 rgba(255,150,0,.3);
 }
 
@@ -686,8 +686,8 @@ display:none;pointer-events:none;
   border-radius:6px;aspect-ratio:1;
   display:flex;align-items:center;justify-content:center;
   font-weight:700;font-family:var(--fo);
-  color:rgba(235,215,255,.9);
-  font-size:clamp(10px,2vw,15px);letter-spacing:1px;
+  color:rgba(255,255,255,.92);
+  font-size:clamp(12px,2vw,16px);letter-spacing:0;
   cursor:pointer;position:relative;min-width:0;min-height:0;
   -webkit-touch-callout:none;-webkit-user-select:none;touch-action:none;-ms-touch-action:none;
   box-shadow:0 3px 0 rgba(0,0,0,.85),inset 0 1px 0 rgba(157,78,221,.1);
@@ -3030,7 +3030,7 @@ function buildGrid(){
   const wrap=document.getElementById('gridWrap')
   const availW=((wrap&&wrap.clientWidth>0)?wrap.clientWidth:window.innerWidth)-24 // subtract padding
   const tileW=availW/COLS
-  const fs=Math.max(8,Math.min(14,Math.floor(tileW*0.42)))+'px'
+  const fs=Math.max(11,Math.min(18,Math.floor(tileW*0.52)))+'px'
   const _r=rng||Math.random.bind(Math)
   for(let i=0;i<COLS*COLS;i++){
     const t=document.createElement('div');t.className='tile fly-in';t.dataset.i=i
