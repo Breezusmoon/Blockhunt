@@ -1,0 +1,40 @@
+name: BlockHunt Auto-Settle
+
+on:
+  schedule:
+    # Daily settlement — every day at midnight UTC
+    - cron: '0 0 * * *'
+    # Weekly settlement — every Sunday at midnight UTC  
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Settle BlockHunt Rounds
+        run: |
+          # Install cast (Foundry) for contract calls
+          curl -L https://foundry.paradigm.xyz | bash
+          export PATH="$HOME/.foundry/bin:$PATH"
+          foundryup
+
+          CONTRACT="0xde7FCA05f6c2a0c957fcDEC91717F5745fa0EbcB"
+          RPC="https://api.avax.network/ext/bc/C/rpc"
+          
+          # Determine which settlement to run
+          DAY=$(date +%u) # 1=Mon, 7=Sun
+          
+          echo "Running daily settlement..."
+          cast send $CONTRACT "settleDaily()" \
+            --rpc-url $RPC \
+            --private-key ${{ secrets.SETTLE_PRIVATE_KEY }} \
+            --gas-limit 500000 || echo "Daily settle failed or not ready"
+          
+          if [ "$DAY" = "7" ]; then
+            echo "Sunday — running weekly settlement..."
+            cast send $CONTRACT "settleWeekly()" \
+              --rpc-url $RPC \
+              --private-key ${{ secrets.SETTLE_PRIVATE_KEY }} \
+              --gas-limit 500000 || echo "Weekly settle failed or not ready"
+          fi
