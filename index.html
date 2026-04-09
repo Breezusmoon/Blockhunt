@@ -1447,7 +1447,7 @@ body{padding-top:env(safe-area-inset-top)}
         <span class="mode-prize-val" id="easyPrize">—</span>
       </div>
       <button class="mode-btn easy-btn" onclick="tryEnter('easy')" id="easyEntBtn">🔗 Connect Wallet to Enter</button>
-      <button class="mode-train-btn" onclick="setDiff('easy');startTraining()">▶ Try Free First</button>
+      
     </div>
 
     <!-- ── HARD MODE CARD ─────────────────────────────────────────── -->
@@ -1467,7 +1467,7 @@ body{padding-top:env(safe-area-inset-top)}
         <span class="mode-prize-val" style="color:var(--muted)">0.50 AVAX</span>
       </div>
       <button class="mode-btn hard-btn" onclick="tryEnter('hard')" id="hardEntBtn">🔗 Connect Wallet to Enter</button>
-      <button class="mode-train-btn" onclick="setDiff('hard');startTraining()">▶ Try Free First</button>
+      
     </div>
 
     <!-- ── WEEKLY TOURNAMENT CARD ─────────────────────────────────── -->
@@ -3988,7 +3988,7 @@ function playerStartGame(){
   if(wp)wp.style.display='';
   t0=Date.now();gameOn=true;
   stats.played++;saveSt();renderSt();
-  runTimer();
+  renderWords();runTimer();
 }
 function dismissIntro(){
   const el=document.getElementById('intro')
