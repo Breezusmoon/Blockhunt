@@ -3030,7 +3030,7 @@ function buildGrid(){
   const wrap=document.getElementById('gridWrap')
   const availW=((wrap&&wrap.clientWidth>0)?wrap.clientWidth:window.innerWidth)-24 // subtract padding
   const tileW=availW/COLS
-  const fs=Math.max(11,Math.min(18,Math.floor(tileW*0.52)))+'px'
+  const fs=Math.max(13,Math.min(22,Math.floor(tileW*0.65)))+'px'
   const _r=rng||Math.random.bind(Math)
   for(let i=0;i<COLS*COLS;i++){
     const t=document.createElement('div');t.className='tile fly-in';t.dataset.i=i
