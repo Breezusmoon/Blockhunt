@@ -1988,12 +1988,20 @@ async function keccak4Selector(sig){
 }
 // Precomputed keccak256(sig)[0:4] — verified against ethers.js
 const SELECTORS={
-  'enterRound(string)':          'c3f1e6e6',
-  'submitScore(uint256)':        'b3c7f284',
-  'getCurrentRound()':           '7fb97d8e',
-  'hasPlayerEntered(address)':   '8a095f6e',
-  'getEntryFee(string)':         '52e9c7f5',
-  'getPlayerScore(address,uint256)':'f9e3c234'
+  'enterEasy()':                  'aa224330',
+  'enterHard()':                  '4f5ffecc',
+  'enterWeekly()':                '5255eb09',
+  'submitScoreEasy(uint256)':     '2e8511f0',
+  'submitScoreHard(uint256)':     '315e71e0',
+  'submitScoreWeekly(uint256)':   'd8bb7ac9',
+  'settleDaily()':                'ebfe6d22',
+  'settleWeekly()':               '4ec3cc11',
+  'getCurrentEasyRound()':        '486fadae',
+  'getCurrentHardRound()':        'e44a987e',
+  'getCurrentWeeklyRound()':      '595be121',
+  'hasEnteredEasy(address)':      '9afe5848',
+  'hasEnteredHard(address)':      '9f88f73a',
+  'hasEnteredWeekly(address)':    '0a24f079'
 }
 function selector(sig){return '0x'+(SELECTORS[sig]||'00000000')}
 const ALLDIRS=[[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]]
@@ -2788,7 +2796,7 @@ async function sendEntryFee(){
   const txHash=await prov.request({method:'eth_sendTransaction',params:[{
     from:wallet,
     to:CONTRACT_ADDRESS,
-    value:'0x'+getEntryWei().toString(16),
+    value:getEntryWei(),
     data:data,
     gas:'0x'+(150000).toString(16)
   }]})
