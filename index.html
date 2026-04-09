@@ -1348,7 +1348,7 @@ body{padding-top:env(safe-area-inset-top)}
   <div class="th-left">
     <div class="th-live"><span class="th-pulse"></span>LIVE TOURNAMENT</div>
     <div class="th-title">Daily BlockHunt</div>
-    <div class="th-sub">Same puzzle · Everyone competes · Top 3 win real AVAX</div>
+    <div class="th-sub">Be the fastest · Win up to 1 AVAX · Real prizes on Avalanche</div>
   </div>
   <div class="th-stats">
     <div class="th-stat">
@@ -1456,13 +1456,13 @@ body{padding-top:env(safe-area-inset-top)}
         <div class="mode-fee">0.085 <span>AVAX</span></div>
       </div>
       <div class="mode-title">Competitive</div>
-      <div class="mode-desc">10 words · 8 directions · 1 hint · 2 min timer.<br>Fastest solver wins flat AVAX. No ties.</div>
-      <div class="mode-prize-row">
-        <span class="mode-prize-label">🥇 1st wins</span>
-        <span class="mode-prize-val" style="color:var(--gold)">1.00 AVAX</span>
+      <div class="mode-desc">10 words · 8 directions · 1 hint · 2 min timer.<br>Fastest solver takes the prize. No ties.</div>
+      <div style="text-align:center;margin:10px 0 6px">
+        <div style="font-family:var(--fo);font-size:28px;font-weight:900;color:var(--gold);text-shadow:0 0 30px rgba(255,214,10,.6);letter-spacing:2px">1 AVAX</div>
+        <div style="font-family:var(--fo);font-size:9px;letter-spacing:3px;color:var(--orange);margin-top:2px">🥇 WINNER TAKES ALL</div>
       </div>
       <div class="mode-prize-row" style="margin-top:4px">
-        <span class="mode-prize-label">🥈 2nd wins</span>
+        <span class="mode-prize-label">🥈 Runner up</span>
         <span class="mode-prize-val" style="color:var(--muted)">0.50 AVAX</span>
       </div>
       <button class="mode-btn hard-btn" onclick="tryEnter('hard')" id="hardEntBtn">🔗 Connect Wallet to Enter</button>
@@ -1952,7 +1952,7 @@ const AVAX_CHAIN_ID='0xa86a'   // 43114 — AVAX C-Chain mainnet
 // BLOCKHUNT CONTRACT — Avalanche C-Chain
 // Deploy BlockHunt.sol and paste address below
 // ═══════════════════════════════════════════════════════
-const CONTRACT_ADDRESS = '0x8Af46259AD156D5E8e38a87684e0B8757781cd81' // BlockHunt deployed on Avalanche C-Chain
+const CONTRACT_ADDRESS = '0xde7FCA05f6c2a0c957fcDEC91717F5745fa0EbcB' // BlockHunt V2 — unlimited players, dynamic pool
 const AVAX_ADDRESS = CONTRACT_ADDRESS // backwards compat
 
 // Minimal ABI — only functions the game needs
