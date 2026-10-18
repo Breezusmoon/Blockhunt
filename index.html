@@ -1057,7 +1057,7 @@ body{padding-top:env(safe-area-inset-top)}
 #ob-wrap{background:linear-gradient(145deg,rgba(14,9,25,.99),rgba(8,4,16,1));border:1px solid rgba(157,78,221,.25);border-radius:var(--rxl);padding:32px;max-width:380px;width:100%;text-align:center;box-shadow:0 0 60px rgba(157,78,221,.1),0 20px 60px rgba(0,0,0,.8)}
 #ob-steps{position:relative;min-height:180px}
 .ob-step{display:none;flex-direction:column;align-items:center;gap:14px}.ob-step.active{display:flex}
-.ob-illu{width:100%;display:flex;align-items:center;justify-content:center;height:100px}
+.ob-illu{width:100%;display:flex;align-items:center;justify-content:center;min-height:100px;margin-bottom:4px}
 .ob-mini-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:min(160px,60%)}
 .ob-letter{width:100%;aspect-ratio:1;background:var(--tile-bg);border:1px solid var(--tile-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--fo);font-size:11px;font-weight:700;color:rgba(200,170,255,.4)}
 .ob-letter.ob-hl{background:var(--tile-bg-found);border-color:rgba(255,107,0,.5);color:var(--gold)}
@@ -1875,13 +1875,13 @@ body{padding-top:env(safe-area-inset-top)}
 const WORD_PACKS={
   avax:{
     id:'avax', name:'🔺 AVAX Season', emoji:'🔺', color:'kaspa',
-    desc:'Avalanche blockchain & AVAX ecosystem terms',
-    words:['AVALANCHE','SUBNET','VALIDATOR','STAKING','CONSENSUS','NETWORK','NODE','WALLET','TOKEN','BLOCK','CHAIN','LEDGER','MAINNET','TESTNET','PROTOCOL','BRIDGE','ORACLE','EPOCH','NONCE','SIGNATURE','MNEMONIC','SEED','TRANSACTION','MULTISIG','DELEGATE','SNAPSHOT','COLLATERAL','PROPOSAL','GOVERNANCE','FUJI','CCHAIN','XCHAIN','PCHAIN','AVAX','CORETH']
+    desc:'Avalanche & AVAX — the basics',
+    words:['AVALANCHE','AVAX','WALLET','TOKEN','BLOCK','CHAIN','NETWORK','NODE','STAKE','STAKING','REWARD','BRIDGE','SEED','PHRASE','KEYS','ADDRESS','BALANCE','DEPOSIT','TRANSFER','SEND','GAS','FEES','FAST','SPEED','SNOW','PEAK','SUMMIT','MOUNTAIN','ICE','STORM','CORE','LEDGER','COIN','BUILD']
   },
   defi:{
     id:'defi', name:'💹 DeFi Season', emoji:'💹', color:'green',
     desc:'Decentralized finance terms',
-    words:['DEFI','LIQUIDITY','STAKING','YIELD','SWAP','VAULT','LENDING','FARMING','POOL','AIRDROP','SLIPPAGE','LEVERAGE','FLOOR','ALPHA','BURN','MINT','STAKE','COLLATERAL','FLASH','AUDIT','FORK','BRIDGE','INDEX','RATIO','MARGIN','SHORT','LONG','HEDGE','BASIS','CARRY','DELTA','GAMMA','THETA','VEGA','CURVE','VOLUME']
+    words:['DEFI','YIELD','SWAP','VAULT','LENDING','BORROW','LOAN','POOL','FARMING','AIRDROP','LEVERAGE','ALPHA','BURN','MINT','STAKE','INTEREST','REWARD','BRIDGE','MARGIN','SHORT','LONG','HEDGE','PROFIT','LOSS','RISK','SAVINGS','DEPOSIT','WITHDRAW','BALANCE','TRADE','MARKET','PRICE','VOLUME','CHART']
   },
   crypto:{
     id:'crypto', name:'🪙 Crypto Culture', emoji:'🪙', color:'gold',
@@ -1896,7 +1896,7 @@ const WORD_PACKS={
   web3:{
     id:'web3', name:'🌐 Web3 Season', emoji:'🌐', color:'cyan',
     desc:'Next-gen internet & blockchain builders',
-    words:['DECENTRALIZED','TRUSTLESS','PERMISSIONLESS','CENSORSHIP','IMMUTABLE','TRANSPARENT','COMPOSABLE','INTEROPERABLE','SCALABLE','LAYER','ROLLUP','SIDECHAIN','SHARDING','FINALITY','THROUGHPUT','LATENCY','BANDWIDTH','GOSSIP','MEMPOOL','PROPAGATION','PRUNING','ARCHIVAL','SNAPSHOT','VALIDATOR','WITNESS','MERKLE','PATRICIA','TRIE','BLOOM','FILTER']
+    words:['INTERNET','ONLINE','DIGITAL','PUBLIC','PRIVATE','OPEN','SECURE','CODE','APP','CLOUD','DATA','SERVER','NETWORK','LAYER','BLOCK','CHAIN','TOKEN','WALLET','LOGIN','ACCOUNT','ADDRESS','PROFILE','AVATAR','CREATOR','COMMUNITY','VOTE','OWNER','BUILD','LAUNCH','FUTURE','WORLD','SOCIAL','SHARE']
   },
   hunt:{
     id:'hunt', name:'🎯 $HUNT Season', emoji:'🎯', color:'red',
@@ -4232,8 +4232,8 @@ function scheduleLocalNotif(){
     const delay=tomorrow-now
     if(delay>0)setTimeout(()=>{
       reg.showNotification('⬡ BlockHunt Daily',{
-        body:"Today's daily challenge is live! Top the leaderboard for real AVAX.",
-        icon:'icon-192.png',badge:'icon-192.png',
+        body:"Today's daily challenge is live — same puzzle for everyone. Can you top the board?",
+        icon:'assets/icon-192.png',badge:'assets/icon-192.png',
         tag:'blockhunt-daily',renotify:false
       })
     },delay)
@@ -4316,10 +4316,10 @@ function scheduleLocalNotif(){
       <div class="ob-step" id="ob-s3">
         <div class="ob-illu" style="flex-direction:column;gap:10px">
           <div class="ob-kaspa-logo">🔺</div>
-          <div style="font-family:var(--fn);font-size:14px;font-weight:900;color:var(--gold);letter-spacing:1px;text-shadow:0 0 16px rgba(255,179,0,.5)">+1–5 AVAX / day</div>
+          <div style="font-family:var(--fn);font-size:14px;font-weight:900;color:var(--gold);letter-spacing:1px;text-shadow:0 0 16px rgba(255,179,0,.5)">Top 3 split the pool</div>
         </div>
         <div class="ob-title">Win real AVAX prizes</div>
-        <div class="ob-desc">Pay 0.1 AVAX to enter daily tournaments. The fastest hunters split the prize pool — paid directly to your wallet.</div>
+        <div class="ob-desc">Play free as much as you like. When you're ready, enter a tournament from 0.05 AVAX — the 3 fastest hunters split the pool 70/20/10, paid straight to their wallets.</div>
       </div>
     </div>
     <div id="ob-dots">
