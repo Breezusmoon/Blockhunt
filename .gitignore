@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+.wrangler/
+.dev.vars
+contracts/out/
+contracts/cache/
+contracts/lib/
+contracts/broadcast/

@@ -1,0 +1,18 @@
+{
+  "name": "blockhunt-score-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/unit.test.js",
+    "e2e": "node test/e2e.mjs"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.9.0",
+    "@noble/hashes": "^1.8.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+# BlockHunt score server — see DEPLOY.md in the repo root.
+name = "blockhunt-score"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Filled in after the V3 contract is deployed (DEPLOY.md step 3)
+CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
+CHAIN_ID = "43114"
+RPC_URL = "https://api.avax.network/ext/bc/C/rpc"
+ALLOWED_ORIGINS = "https://breezusmoon.github.io"
+# SIGNER_KEY is a secret:  npx wrangler secret put SIGNER_KEY
+
+[[durable_objects.bindings]]
+name = "LEDGER"
+class_name = "Ledger"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Ledger"]

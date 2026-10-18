@@ -1,40 +1,50 @@
 name: BlockHunt Auto-Settle
 
+# V3 settlement is permissionless: anyone can call settle() once a round ends, and the
+# game keeps working even if this never runs (winners can collect from the site).
+# This job just makes payouts land automatically shortly after each round closes.
+#
+# SETTLE_PRIVATE_KEY = a throwaway wallet holding ~0.2 AVAX for gas. NEVER the house wallet.
+
 on:
   schedule:
-    # Daily settlement — every day at midnight UTC
-    - cron: '0 0 * * *'
-    # Weekly settlement — every Sunday at midnight UTC  
-    - cron: '0 0 * * 0'
-  workflow_dispatch: # Allow manual trigger
+    - cron: '15 0 * * *' # 00:15 UTC daily (rounds close at 00:00 + 10 min grace)
+  workflow_dispatch:
 
 jobs:
   settle:
     runs-on: ubuntu-latest
     steps:
-      - name: Settle BlockHunt Rounds
-        run: |
-          # Install cast (Foundry) for contract calls
-          curl -L https://foundry.paradigm.xyz | bash
-          export PATH="$HOME/.foundry/bin:$PATH"
-          foundryup
+      - uses: actions/checkout@v4
 
-          CONTRACT="0xde7FCA05f6c2a0c957fcDEC91717F5745fa0EbcB"
-          RPC="https://api.avax.network/ext/bc/C/rpc"
-          
-          # Determine which settlement to run
-          DAY=$(date +%u) # 1=Mon, 7=Sun
-          
-          echo "Running daily settlement..."
-          cast send $CONTRACT "settleDaily()" \
-            --rpc-url $RPC \
-            --private-key ${{ secrets.SETTLE_PRIVATE_KEY }} \
-            --gas-limit 500000 || echo "Daily settle failed or not ready"
-          
-          if [ "$DAY" = "7" ]; then
-            echo "Sunday — running weekly settlement..."
-            cast send $CONTRACT "settleWeekly()" \
-              --rpc-url $RPC \
-              --private-key ${{ secrets.SETTLE_PRIVATE_KEY }} \
-              --gas-limit 500000 || echo "Weekly settle failed or not ready"
-          fi
+      - name: Read contract address from the site config
+        id: cfg
+        run: |
+          ADDR=$(grep -oE "contract: '0x[0-9a-fA-F]{40}'" js/tournament.js | grep -oE "0x[0-9a-fA-F]{40}" || true)
+          echo "contract=$ADDR" >> "$GITHUB_OUTPUT"
+          if [ -z "$ADDR" ]; then echo "V3 not deployed yet — nothing to settle"; fi
+
+      - name: Install Foundry
+        if: steps.cfg.outputs.contract != ''
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Settle finished rounds
+        if: steps.cfg.outputs.contract != ''
+        env:
+          CONTRACT: ${{ steps.cfg.outputs.contract }}
+          RPC: https://api.avax.network/ext/bc/C/rpc
+          KEY: ${{ secrets.SETTLE_PRIVATE_KEY }}
+        run: |
+          NOW=$(date -u +%s)
+          DAY=$(( NOW / 86400 ))
+          WEEK=$(( (DAY + 4) / 7 ))
+          settle () { # mode roundId label
+            SETTLED=$(cast call "$CONTRACT" "getRound(uint8,uint256)(uint256,uint256,uint256,bool,uint256,address[3],uint32[3])" "$1" "$2" --rpc-url "$RPC" | sed -n 4p)
+            if [ "$SETTLED" = "true" ]; then echo "$3 round $2 already settled"; return; fi
+            cast send "$CONTRACT" "settle(uint8,uint256)" "$1" "$2" --rpc-url "$RPC" --private-key "$KEY" \
+              && echo "✅ settled $3 round $2" || echo "⚠️ $3 round $2 not settled (not finished yet?)"
+          }
+          settle 0 $(( DAY - 1 )) Easy
+          settle 1 $(( DAY - 1 )) Hard
+          # Weekly rounds end Sunday 00:00 UTC — today's run (Sunday) settles last week
+          settle 2 $(( WEEK - 1 )) Weekly
