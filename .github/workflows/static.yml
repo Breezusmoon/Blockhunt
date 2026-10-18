@@ -37,7 +37,7 @@ jobs:
         # Only the game itself is published — contracts, worker and tests stay out of the site
         run: |
           mkdir _site
-          cp -r index.html 404.html manifest.json assets js tools _site/
+          cp -r index.html 404.html manifest.json sw.js assets js tools _site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
